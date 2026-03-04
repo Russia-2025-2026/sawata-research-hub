@@ -1,5 +1,5 @@
 /**
- * SAWATA RESEARCH HUB - Main Application JavaScript
+ * REPOSITORY - Main Application JavaScript
  * Supabase Cloud Storage Integration
  */
 
@@ -2871,4 +2871,92 @@ function setupEventListeners() {
             filterByCategory(checked.includes('all') || checked.length === 0 ? 'all' : checked[0]);
         });
     });
+}
+
+// =====================================================
+// MOBILE MENU FUNCTIONS
+// =====================================================
+
+function toggleMobileMenu() {
+    const navList = document.querySelector('.nav-list');
+    if (navList) {
+        navList.classList.toggle('active');
+    }
+}
+
+function closeMobileMenu() {
+    const navList = document.querySelector('.nav-list');
+    if (navList) {
+        navList.classList.remove('active');
+    }
+}
+
+// =====================================================
+// PAPERS SEARCH AND SORT FUNCTIONS
+// =====================================================
+
+function searchPapers(query) {
+    if (!query || query.trim() === '') {
+        // If search is empty, show all filtered papers
+        filteredPapers = [...researchPapers];
+    } else {
+        const searchTerm = query.toLowerCase().trim();
+        filteredPapers = researchPapers.filter(paper => {
+            return (
+                (paper.title && paper.title.toLowerCase().includes(searchTerm)) ||
+                (paper.authors && paper.authors.some(author => author.toLowerCase().includes(searchTerm))) ||
+                (paper.abstract && paper.abstract.toLowerCase().includes(searchTerm)) ||
+                (paper.keywords && paper.keywords.some(kw => kw.toLowerCase().includes(searchTerm))) ||
+                (paper.category && paper.category.toLowerCase().includes(searchTerm)) ||
+                (paper.strand && paper.strand.toLowerCase().includes(searchTerm))
+            );
+        });
+    }
+
+    // Apply current sort
+    const sortSelect = document.getElementById('sort-by');
+    if (sortSelect) {
+        sortPapers();
+    } else {
+        currentPage = 1;
+        renderPapersGrid();
+    }
+}
+
+function sortPapers() {
+    const sortSelect = document.getElementById('sort-by');
+    if (!sortSelect) return;
+
+    const sortValue = sortSelect.value;
+
+    // If filteredPapers is empty, copy researchPapers to it first
+    if (filteredPapers.length === 0 && researchPapers.length > 0) {
+        filteredPapers = [...researchPapers];
+    }
+
+    // If still empty, nothing to sort
+    if (filteredPapers.length === 0) {
+        return;
+    }
+
+    switch (sortValue) {
+        case 'newest':
+            filteredPapers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            break;
+        case 'oldest':
+            filteredPapers.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            break;
+        case 'title':
+            filteredPapers.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+            break;
+        case 'views':
+            filteredPapers.sort((a, b) => (b.views || 0) - (a.views || 0));
+            break;
+        case 'downloads':
+            filteredPapers.sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+            break;
+    }
+
+    currentPage = 1;
+    renderPapersGrid();
 }
