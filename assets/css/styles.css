@@ -550,6 +550,83 @@ html, body {
     box-shadow: var(--shadow-md);
 }
 
+/* Papers Search Box */
+.papers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.search-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.papers-search-box {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    padding: 8px 14px;
+    gap: 8px;
+    min-width: 200px;
+}
+
+.papers-search-box i {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.papers-search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    min-width: 150px;
+}
+
+.sort-select {
+    padding: 8px 12px;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--white);
+    cursor: pointer;
+    min-width: 140px;
+}
+
+/* Mobile Close Button */
+.mobile-close-btn {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--white);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    color: var(--text-dark);
+    cursor: pointer;
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+}
+
+.mobile-close-btn:hover {
+    background: var(--danger);
+    color: var(--white);
+}
+
 .quick-filters {
     display: flex;
     align-items: center;
@@ -3676,23 +3753,31 @@ html, body {
         margin-top: 10px;
         display: flex;
         justify-content: flex-end;
+        position: relative;
     }
 
     .nav-list {
         display: none;
         flex-direction: column;
         width: 100%;
-        padding: 15px;
-        background: var(--off-white);
+        padding: 50px 15px 15px;
+        background: var(--white);
         border-radius: 8px;
         margin-top: 10px;
-        position: absolute;
+        position: fixed;
+        top: 0;
         left: 0;
         right: 0;
-        z-index: 999;
+        bottom: 0;
+        z-index: 1000;
+        overflow-y: auto;
     }
 
     .nav-list.active {
+        display: flex;
+    }
+
+    .mobile-close-btn {
         display: flex;
     }
 
@@ -3749,6 +3834,19 @@ html, body {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+
+    .search-options {
+        width: 100%;
+    }
+
+    .papers-search-box {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .sort-select {
+        width: 100%;
     }
 
     .papers-grid {
@@ -3939,4 +4037,5 @@ html, body {
         display: none;
     }
 }
+
 
