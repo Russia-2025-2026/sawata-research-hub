@@ -166,6 +166,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -174,38 +175,29 @@ body {
     line-height: 1.6;
     color: var(--text-dark);
     background-color: var(--off-white);
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: color var(--transition-fast);
+/* Global Fix for Horizontal Scroll Prevention */
+html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
 }
 
-ul {
-    list-style: none;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-button {
-    cursor: pointer;
-    font-family: inherit;
-}
-
-input, select, textarea {
-    font-family: inherit;
-    font-size: inherit;
-}
-
+/* Container with Safe Margins */
 .container {
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--spacing-lg);
+    padding: 0 20px;
+}
+
+/* Extra small devices (phones) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
 }
 
 /* =====================================================
@@ -254,7 +246,9 @@ input, select, textarea {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md) 0;
+    padding: 12px 0;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .logo-section {
@@ -311,11 +305,13 @@ input, select, textarea {
 .main-nav {
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .nav-list {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: 20px;
+    align-items: center;
 }
 
 .nav-link {
@@ -449,8 +445,9 @@ input, select, textarea {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 50%, #001f4d 100%);
     display: flex;
     align-items: center;
-    padding: var(--spacing-xxl) 0;
+    padding: 60px 20px;
     overflow: hidden;
+    width: 100%;
 }
 
 .hero-section::before {
@@ -639,7 +636,9 @@ input, select, textarea {
 .browse-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
-    gap: var(--spacing-xl);
+    gap: 24px;
+    width: 100%;
+    overflow: hidden;
 }
 
 /* Filters Sidebar */
@@ -3477,7 +3476,9 @@ input, select, textarea {
 .main-footer {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     color: var(--white);
-    padding: var(--spacing-xxl) 0 var(--spacing-lg);
+    padding: 48px 0 20px;
+    width: 100%;
+    overflow: hidden;
 }
 
 .footer-content {
@@ -3605,26 +3606,40 @@ input, select, textarea {
     .browse-layout {
         grid-template-columns: 250px 1fr;
     }
-    
+
     .charts-container {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
-    
+
     .chart-card {
         min-height: 320px;
     }
-    
+
     .chart-card.full-width {
         grid-column: span 1;
     }
-    
+
     .footer-content {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .form-row.two-col {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 36px;
+    }
+
+    .main-title {
+        font-size: 20px;
     }
 }
 
@@ -3632,170 +3647,296 @@ input, select, textarea {
     .gov-links {
         display: none;
     }
-    
+
     .header-content {
         flex-wrap: wrap;
+        justify-content: space-between;
     }
-    
+
+    .logo-section {
+        flex-shrink: 0;
+    }
+
+    .school-logo-image {
+        width: 50px;
+        height: 50px;
+    }
+
+    .main-title {
+        font-size: 18px;
+    }
+
+    .subtitle, .school-name {
+        font-size: 10px;
+    }
+
     .main-nav {
         order: 3;
         width: 100%;
-        margin-top: var(--spacing-md);
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
     }
-    
+
     .nav-list {
         display: none;
         flex-direction: column;
         width: 100%;
-        padding: var(--spacing-md);
+        padding: 15px;
         background: var(--off-white);
-        border-radius: var(--radius-md);
-        margin-top: var(--spacing-md);
+        border-radius: 8px;
+        margin-top: 10px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 999;
     }
-    
+
     .nav-list.active {
         display: flex;
     }
-    
+
     .mobile-menu-btn {
         display: block;
+        padding: 8px;
     }
-    
+
+    .nav-link, .upload-btn-nav, .login-btn-nav, .signup-btn-nav, .logout-btn-nav, .my-uploads-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .hero-section {
+        min-height: auto;
+        padding: 40px 15px;
+    }
+
     .hero-title {
-        font-size: 32px;
-    }
-    
-    .hero-stats {
-        gap: var(--spacing-lg);
-    }
-    
-    .stat-number {
         font-size: 28px;
+        line-height: 1.3;
     }
-    
+
+    .hero-subtitle {
+        font-size: 14px;
+    }
+
+    .hero-stats {
+        gap: 20px;
+        flex-direction: column;
+    }
+
+    .stat-number {
+        font-size: 24px;
+    }
+
+    .stat-item {
+        width: 100%;
+    }
+
     .browse-layout {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
-    
+
     .filters-sidebar {
         position: static;
+        width: 100%;
     }
-    
+
     .papers-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
     }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .about-sidebar {
+
+    .papers-grid {
         grid-template-columns: 1fr;
     }
-    
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-layout {
+        grid-template-columns: 1fr;
+    }
+
     .footer-content {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
-    
+
     .modal-content {
         max-width: 100%;
-        margin: var(--spacing-md);
+        margin: 15px;
+        width: calc(100% - 30px);
+    }
+
+    .search-container {
+        padding: 15px;
     }
 }
 
 @media (max-width: 576px) {
     .container {
-        padding: 0 var(--spacing-md);
+        padding: 0 12px;
         margin: 0 auto;
         max-width: 100%;
     }
-    
+
     .main-content {
         margin: 0 auto;
-        padding: 0 var(--spacing-md);
+        padding: 0 12px;
     }
-    
+
     .hero-section {
         min-height: auto;
-        padding: var(--spacing-xl) 0;
+        padding: 30px 12px;
     }
-    
+
     .hero-title {
-        font-size: 26px;
+        font-size: 22px;
     }
-    
+
     .hero-subtitle {
-        font-size: 15px;
+        font-size: 13px;
     }
-    
+
     .search-container {
-        padding: var(--spacing-md);
+        padding: 15px;
     }
-    
+
     .search-box {
         flex-wrap: wrap;
     }
-    
+
     .search-input {
         width: 100%;
+        min-width: 100%;
     }
-    
+
     .search-btn {
         width: 100%;
-        margin-top: var(--spacing-sm);
+        margin-top: 10px;
     }
-    
+
     .quick-filters {
         display: none;
     }
-    
+
     .hero-stats {
         flex-direction: column;
-        gap: var(--spacing-md);
+        gap: 15px;
     }
-    
+
+    .stat-number {
+        font-size: 20px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
     .papers-grid {
         grid-template-columns: 1fr;
     }
-    
+
+    .paper-card {
+        padding: 15px;
+    }
+
+    .paper-card-title {
+        font-size: 14px;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .stat-info .stat-number {
+        font-size: 20px;
+    }
+
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+
     .admin-toolbar {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .admin-toolbar .search-box {
         min-width: 100%;
     }
-    
+
     .admin-table-container {
         overflow-x: auto;
     }
-    
+
     .admin-table {
-        min-width: 600px;
+        min-width: 500px;
     }
-    
+
     .form-actions {
         flex-direction: column;
     }
-    
+
     .btn-primary,
     .btn-secondary {
         width: 100%;
         justify-content: center;
     }
-    
+
     .footer-bottom {
         text-align: center;
     }
-    
+
     .notification {
         min-width: auto;
-        width: calc(100vw - 32px);
+        width: calc(100vw - 24px);
+        left: 12px;
+        right: 12px;
+    }
+
+    .footer-section {
+        padding: 0 10px;
+    }
+
+    .footer-content {
+        gap: 20px;
+    }
+
+    .logo-text {
+        max-width: 150px;
+    }
+
+    .main-title {
+        font-size: 16px;
+    }
+
+    .subtitle {
+        font-size: 9px;
+    }
+
+    .school-name {
+        display: none;
     }
 }
+
