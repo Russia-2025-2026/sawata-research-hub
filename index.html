@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sawata Research Hub - Institutional Repository | Sawata National High School</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Supabase Loading Overlay -->
+    <div id="supabase-loading" class="cloud-loading-overlay">
+        <div class="cloud-loading-content">
+            <div class="cloud-loading-spinner"></div>
+            <p>Connecting to Cloud Storage...</p>
+            <small>Loading research papers from cloud</small>
+        </div>
+    </div>
+    <!-- Government Top Bar -->
+    <div class="gov-top-bar">
+        <div class="container">
+            <div class="gov-content">
+                <span class="repubilc-text">Republic of the Philippines</span>
+                <div class="gov-links">
+                    <a href="#">DepEd Philippines</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="assets/images/sawata-logo.png" alt="Sawata National High School Logo" class="school-logo-image">
+                    <div class="logo-text">
+                        <h1 class="main-title">Sawata Research Hub</h1>
+                        <p class="subtitle">Institutional Repository</p>
+                        <p class="school-name">Sawata National High School</p>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <ul class="nav-list">
+                        <li><a href="#home" class="nav-link active">Home</a></li>
+                        <li><a href="#browse" class="nav-link">Browse Research</a></li>
+                        <li><a href="#statistics" class="nav-link">Statistics</a></li>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><button class="upload-btn-nav" onclick="openUploadModal()">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Research
+                        </button></li>
+                        <li><button class="my-uploads-btn" onclick="showMyUploads()">
+                            <i class="fas fa-folder"></i> My Uploads
+                        </button></li>
+                        <li><button class="login-btn-nav" onclick="openLoginModal()" id="login-nav-btn">
+                            <i class="fas fa-user"></i> Login
+                        </button></li>
+                        <li><button class="signup-btn-nav" onclick="openSignupModal()" id="signup-nav-btn">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </button></li>
+                        <li><button class="logout-btn-nav hidden" onclick="handleLogout()" id="logout-nav-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button></li>
+                        <li><a href="#admin" class="nav-link admin-only visible" id="admin-nav-link" onclick="scrollToAdmin(event)">
+                            <i class="fas fa-cog"></i> Admin
+                        </a></li>
+                    </ul>
+                    <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">Preserving Knowledge, Inspiring Discovery</h2>
+                <p class="hero-subtitle">Access and explore research studies, capstone projects, and scientific investigations produced by the Sawata National High School community.</p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="hero-search" class="search-input" placeholder="Search research papers, authors, keywords...">
+                        <button class="search-btn" onclick="performSearch()">Search</button>
+                    </div>
+                    
+                    <div class="quick-filters">
+                        <span class="filter-label">Quick filters:</span>
+                        <button class="filter-tag" data-category="all">All</button>
+                        <button class="filter-tag" data-category="SIP">Science Investigatory</button>
+                        <button class="filter-tag" data-category="Capstone">Capstone</button>
+                        <button class="filter-tag" data-category="Action Research">Action Research</button>
+                    </div>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-papers">0</span>
+                        <span class="stat-label">Total Research Papers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-downloads">0</span>
+                        <span class="stat-label">Downloads</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-views">0</span>
+                        <span class="stat-label">Views</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-students">0</span>
+                        <span class="stat-label">Student Researchers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Browse Section -->
+    <section id="browse" class="browse-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Browse Research Papers</h2>
+                <p class="section-description">Explore our collection of academic research and scholarly work</p>
+            </div>
+            
+            <div class="browse-layout">
+                <!-- Sidebar Filters -->
+                <aside class="filters-sidebar">
+                    <div class="filter-section">
+                        <h3 class="filter-title"><i class="fas fa-filter"></i> Filters</h3>
+                        
+                        <div class="filter-group">
+                            <h4 class="filter-heading">Category</h4>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="all" checked>
+                                <span class="checkmark"></span>
+                                All Categories
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="SIP">
+                                <span class="checkmark"></span>
+                                Science Investigatory Project
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="Capstone">
+                                <span class="checkmark"></span>
+                                Capstone Project
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="Action Research">
+                                <span class="checkmark"></span>
+                                Action Research
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="category" value="Thesis">
+                                <span class="checkmark"></span>
+                                Thesis
+                            </label>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <h4 class="filter-heading">Academic Strand</h4>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="strand" value="all" checked>
+                                <span class="checkmark"></span>
+                                All Strands
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="strand" value="STEM">
+                                <span class="checkmark"></span>
+                                STEM
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="strand" value="ABM">
+                                <span class="checkmark"></span>
+                                ABM
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="strand" value="HUMSS">
+                                <span class="checkmark"></span>
+                                HUMSS
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="strand" value="TVL">
+                                <span class="checkmark"></span>
+                                TVL
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" name="strand" value="GAS">
+                                <span class="checkmark"></span>
+                                GAS
+                            </label>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <h4 class="filter-heading">School Year</h4>
+                            <select id="year-filter" class="filter-select">
+                                <option value="all">All Years</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                            </select>
+                        </div>
+                        
+                        <button class="apply-filters-btn" onclick="applyFilters()">
+                            <i class="fas fa-check"></i> Apply Filters
+                        </button>
+                        <button class="reset-filters-btn" onclick="resetFilters()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </aside>
+                
+                <!-- Research Papers Grid -->
+                <div class="papers-container">
+                    <div class="papers-header">
+                        <div class="results-info">
+                            <span id="results-count">No research papers yet</span>
+                        </div>
+                        <div class="sort-options">
+                            <label for="sort-by">Sort by:</label>
+                            <select id="sort-by" class="sort-select" onchange="sortPapers()">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="title">Title (A-Z)</option>
+                                <option value="views">Most Viewed</option>
+                                <option value="downloads">Most Downloaded</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="papers-grid" class="papers-grid">
+                        <!-- Papers will be dynamically loaded here -->
+                    </div>
+                    
+                    <div class="pagination" id="pagination">
+                        <!-- Pagination will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="statistics-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Repository Statistics</h2>
+                <p class="section-description">Overview of research output and engagement metrics</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="stats-papers-card">0</span>
+                        <span class="stat-description">Total Research Papers</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" data-count="12847">0</span>
+                        <span class="stat-description">Total Downloads</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" data-count="48392">0</span>
+                        <span class="stat-description">Total Views</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" data-count="892">0</span>
+                        <span class="stat-description">Student Researchers</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" data-count="45">0</span>
+                        <span class="stat-description">Faculty Advisors</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-number" data-count="3">0</span>
+                        <span class="stat-description">Years Active</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3 class="chart-title">Research by Category</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title">Research by Strand</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="strand-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3 class="chart-title">Publications Per Year</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="yearly-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Papers Section -->
+            <div class="top-papers-section">
+                <h3 class="subsection-title">Most Viewed Research Papers</h3>
+                <div id="top-papers-list" class="top-papers-list">
+                    <!-- Top papers will be dynamically loaded -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-layout">
+                <div class="about-content">
+                    <h2 class="section-title">About Sawata Research Hub</h2>
+                    <div class="about-text">
+                        <p class="lead-text">Sawata Research Hub is the official institutional repository of Sawata National High School, dedicated to preserving, organizing, and providing accessible digital access to research outputs produced by our academic community.</p>
+                        
+                        <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+                        <p>To create a comprehensive, searchable digital archive that preserves the intellectual heritage of Sawata National High School while enhancing research accessibility, promoting academic continuity, and fostering a culture of evidence-based inquiry among students and faculty.</p>
+                        
+                        <h3><i class="fas fa-eye"></i> Our Vision</h3>
+                        <p>To be the leading institutional repository among secondary schools in Davao Region, serving as a model for digital knowledge management and inspiring future generations of student researchers and innovators.</p>
+                        
+                        <h3><i class="fas fa-tasks"></i> Objectives</h3>
+                        <ul class="objectives-list">
+                            <li>Systematically archive all research studies, capstone projects, and Science Investigatory Projects conducted at SNHS</li>
+                            <li>Provide a user-friendly platform for searching and accessing research materials</li>
+                            <li>Facilitate literature reviews and reduce research duplication</li>
+                            <li>Showcase the quality and diversity of research outputs to stakeholders</li>
+                            <li>Promote academic continuity and knowledge sharing within the school community</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="about-sidebar">
+                    <div class="info-card">
+                        <h3><i class="fas fa-map-marker-alt"></i> Location</h3>
+                        <p>Sawata National High School<br>San Isidro District<br>Division of Davao del Norte</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-envelope"></i> Contact</h3>
+                        <p>Email: snhs.research@davaodelnorte.edu.ph<br>Phone: (084) 123-4567</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-clock"></i> Operating Hours</h3>
+                        <p>Monday - Friday: 7:00 AM - 5:00 PM<br>Saturday: 8:00 AM - 12:00 PM</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-link"></i> Quick Links</h3>
+                        <ul class="quick-links-list">
+                            <li><a href="#"><i class="fas fa-external-link-alt"></i> DepEd Philippines</a></li>
+                            <li><a href="#"><i class="fas fa-external-link-alt"></i> DOST</a></li>
+                            <li><a href="#"><i class="fas fa-external-link-alt"></i> Philippine Science High School</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team Section -->
+            <div class="team-section">
+                <h3 class="subsection-title">Key Personnel</h3>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Mr. Alan, Jr. J. Paglinawan</h4>
+                        <p class="team-role">Principal I</p>
+                        <p class="team-desc">School Administrator</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Mr. Vince Angelo B. Mabida</h4>
+                        <p class="team-role">Research Capstone Teacher</p>
+                        <p class="team-desc">Project Adviser</p>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Grade 12 Russia Class</h4>
+                        <p class="team-role">2024-2025</p>
+                        <p class="team-desc">Project Proponents</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Submit Research Section -->
+    <section id="submit" class="submit-section admin-only-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Submit Research Paper</h2>
+                <p class="section-description">Contribute to our institutional repository by uploading your research work</p>
+            </div>
+            
+            <form id="submit-form" class="submit-form" onsubmit="submitResearch(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paper-title">Research Title <span class="required">*</span></label>
+                        <input type="text" id="paper-title" name="title" required placeholder="Enter the complete title of your research">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paper-authors">Authors <span class="required">*</span></label>
+                        <input type="text" id="paper-authors" name="authors" required placeholder="Enter author names separated by commas">
+                    </div>
+                </div>
+                
+                <div class="form-row two-col">
+                    <div class="form-group">
+                        <label for="paper-category">Category <span class="required">*</span></label>
+                        <select id="paper-category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="SIP">Science Investigatory Project (SIP)</option>
+                            <option value="Capstone">Capstone Project</option>
+                            <option value="Action Research">Action Research</option>
+                            <option value="Thesis">Thesis</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paper-strand">Academic Strand <span class="required">*</span></label>
+                        <select id="paper-strand" name="strand" required>
+                            <option value="">Select Strand</option>
+                            <option value="STEM">STEM</option>
+                            <option value="ABM">ABM</option>
+                            <option value="HUMSS">HUMSS</option>
+                            <option value="TVL">TVL</option>
+                            <option value="GAS">GAS</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row two-col">
+                    <div class="form-group">
+                        <label for="paper-year">School Year <span class="required">*</span></label>
+                        <select id="paper-year" name="year" required>
+                            <option value="">Select Year</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paper-adviser">Research Adviser</label>
+                        <input type="text" id="paper-adviser" name="adviser" placeholder="Enter adviser name">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paper-abstract">Abstract <span class="required">*</span></label>
+                        <textarea id="paper-abstract" name="abstract" rows="6" required placeholder="Enter the abstract of your research (summary of the study)"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paper-keywords">Keywords</label>
+                        <input type="text" id="paper-keywords" name="keywords" placeholder="Enter keywords separated by commas">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paper-file">Research Document (PDF) <span class="required">*</span></label>
+                        <div class="file-upload-container">
+                            <input type="file" id="paper-file" name="file" accept=".pdf" required onchange="handleFileUpload(event)">
+                            <div class="file-upload-area" id="upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag and drop your PDF file here or click to browse</p>
+                                <span class="file-requirements">Maximum file size: 25MB | Format: PDF only</span>
+                            </div>
+                        </div>
+                        <div class="file-info" id="file-info" style="display: none;">
+                            <i class="fas fa-file-pdf"></i>
+                            <span id="file-name"></span>
+                            <button type="button" class="remove-file-btn" onclick="removeFile()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="reset" class="btn-secondary">
+                        <i class="fas fa-undo"></i> Reset Form
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-upload"></i> Submit Research
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Admin Panel Section -->
+    <section id="admin" class="admin-section admin-only-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Admin Panel</h2>
+                <p class="section-description">Manage repository, users, and settings</p>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="switchAdminTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab('users')">
+                    <i class="fas fa-users"></i> Users
+                    <span class="badge-count" id="pending-users-count">0</span>
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab('manage')">
+                    <i class="fas fa-tasks"></i> Manage Papers
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab('add')">
+                    <i class="fas fa-plus-circle"></i> Add Paper
+                </button>
+                <button class="tab-btn" onclick="switchAdminTab('settings')">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+            
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="admin-tab active">
+                <div class="admin-dashboard">
+                    <div class="dashboard-header-actions">
+                        <button class="btn-secondary" onclick="loadAdminData()" style="margin-bottom: 15px;">
+                            <i class="fas fa-sync-alt"></i> Refresh from Server
+                        </button>
+                    </div>
+                    <div class="dashboard-stats">
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon users-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="total-users">0</span>
+                                <span class="dash-stat-label">Total Users</span>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon online-icon">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="online-users">0</span>
+                                <span class="dash-stat-label">Online Now</span>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon pending-icon">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="pending-approvals">0</span>
+                                <span class="dash-stat-label">Pending Approvals</span>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-icon papers-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="dash-stat-info">
+                                <span class="dash-stat-number" id="total-papers-admin">0</span>
+                                <span class="dash-stat-label">Total Papers</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-sections">
+                        <div class="dashboard-section">
+                            <h3><i class="fas fa-user-clock"></i> Pending User Approvals</h3>
+                            <div id="pending-approvals-list" class="pending-list">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                </div>
+            </div>
+            
+            <!-- Users Management Tab -->
+            <div id="users-tab" class="admin-tab">
+                <div class="users-management">
+                    <div class="users-toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="users-search" placeholder="Search users..." oninput="searchUsers()">
+                        </div>
+                        <div class="toolbar-actions">
+                            <select id="users-filter" onchange="filterUsers()">
+                                <option value="all">All Users</option>
+                                <option value="approved">Approved</option>
+                                <option value="active">Active</option>
+                                <option value="admin">Admins</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-users" onchange="toggleSelectAllUsers()"></th>
+                                    <th onclick="sortUsers('name')">Name <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortUsers('email')">Email <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortUsers('role')">Role <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortUsers('status')">Status <i class="fas fa-sort"></i></th>
+                                    <th onclick="sortUsers('joined')">Joined <i class="fas fa-sort"></i></th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="admin-pagination" id="users-pagination">
+                        <!-- Dynamic pagination -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Manage Papers Tab -->
+            <div id="manage-tab" class="admin-tab">
+                <div class="admin-toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="admin-search" placeholder="Search papers..." oninput="searchAdminPapers()">
+                    </div>
+                    <div class="toolbar-actions">
+                        <select id="admin-filter" onchange="filterAdminPapers()">
+                            <option value="all">All Categories</option>
+                            <option value="SIP">SIP</option>
+                            <option value="Capstone">Capstone</option>
+                            <option value="Action Research">Action Research</option>
+                            <option value="Thesis">Thesis</option>
+                        </select>
+                        <button class="btn-icon" onclick="exportData()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+                                <th onclick="sortAdminTable('title')">Title <i class="fas fa-sort"></i></th>
+                                <th onclick="sortAdminTable('category')">Category <i class="fas fa-sort"></i></th>
+                                <th onclick="sortAdminTable('year')">Year <i class="fas fa-sort"></i></th>
+                                <th onclick="sortAdminTable('views')">Views <i class="fas fa-sort"></i></th>
+                                <th onclick="sortAdminTable('downloads')">Downloads <i class="fas fa-sort"></i></th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="admin-pagination" id="admin-pagination">
+                    <!-- Dynamic pagination -->
+                </div>
+            </div>
+            
+            <!-- Add Paper Tab -->
+            <div id="add-tab" class="admin-tab">
+                <div class="add-paper-form">
+                    <h3>Add New Research Paper</h3>
+                    <form id="admin-add-form" onsubmit="addPaperFromAdmin(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" id="admin-title" required>
+                            </div>
+                        </div>
+                        <div class="form-row two-col">
+                            <div class="form-group">
+                                <label>Authors *</label>
+                                <input type="text" id="admin-authors" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Adviser</label>
+                                <input type="text" id="admin-adviser">
+                            </div>
+                        </div>
+                        <div class="form-row two-col">
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="admin-category" required>
+                                    <option value="SIP">Science Investigatory Project</option>
+                                    <option value="Capstone">Capstone Project</option>
+                                    <option value="Action Research">Action Research</option>
+                                    <option value="Thesis">Thesis</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Strand *</label>
+                                <select id="admin-strand" required>
+                                    <option value="STEM">STEM</option>
+                                    <option value="ABM">ABM</option>
+                                    <option value="HUMSS">HUMSS</option>
+                                    <option value="TVL">TVL</option>
+                                    <option value="GAS">GAS</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row two-col">
+                            <div class="form-group">
+                                <label>Year *</label>
+                                <select id="admin-year" required>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Views</label>
+                                <input type="number" id="admin-views" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Abstract *</label>
+                                <textarea id="admin-abstract" rows="4" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Keywords</label>
+                                <input type="text" id="admin-keywords">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Research Document (PDF/DOCX)</label>
+                                <div class="file-upload-container admin-file-upload">
+                                    <input type="file" id="admin-file" accept=".pdf,.docx" onchange="handleAdminFileUpload(event)">
+                                    <div class="file-upload-area" id="admin-upload-area">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Click to upload research document</p>
+                                        <span class="file-requirements">PDF or DOCX up to 25MB</span>
+                                    </div>
+                                </div>
+                                <div class="file-info" id="admin-file-info" style="display: none;">
+                                    <i class="fas fa-file"></i>
+                                    <span id="admin-file-name"></span>
+                                    <button type="button" class="remove-file-btn" onclick="clearAdminFile()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-plus"></i> Add Paper
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="admin-tab">
+                <div class="settings-panel">
+                    <h3>Repository Settings</h3>
+                    
+                    <div class="setting-group">
+                        <h4>General Settings</h4>
+                        <div class="setting-item">
+                            <label>Repository Name</label>
+                            <input type="text" value="Sawata Research Hub" readonly>
+                        </div>
+                        <div class="setting-item">
+                            <label>Institution</label>
+                            <input type="text" value="Sawata National High School" readonly>
+                        </div>
+                        <div class="setting-item">
+                            <label>Contact Email</label>
+                            <input type="email" id="settings-email" value="snhs.research@davaodelnorte.edu.ph">
+                            <button class="btn-small" onclick="saveSettings()">Save</button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4>Clear All Data</h4>
+                        <div class="setting-actions" style="flex-direction: column; align-items: flex-start; gap: 15px;">
+                            <p style="font-size: 13px; color: #6c757d; margin: 0;">
+                                Click the button below to immediately clear all saved data including research papers, user accounts, and sessions.
+                            </p>
+                            <button class="btn-danger" onclick="clearAllDataNow()">
+                                <i class="fas fa-trash-alt"></i> Clear All Data Now
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4>Statistics Management</h4>
+                        <div class="setting-item">
+                            <label>Total Papers Count</label>
+                            <input type="number" id="stats-papers" value="0">
+                            <button class="btn-small" onclick="updateStat('papers')">Update</button>
+                        </div>
+                        <div class="setting-item">
+                            <label>Total Downloads Count</label>
+                            <input type="number" id="stats-downloads" value="0">
+                            <button class="btn-small" onclick="updateStat('downloads')">Update</button>
+                        </div>
+                        <div class="setting-item">
+                            <label>Total Views Count</label>
+                            <input type="number" id="stats-views" value="0">
+                            <button class="btn-small" onclick="updateStat('views')">Update</button>
+                        </div>
+                        <div class="setting-item">
+                            <label>Student Researchers Count</label>
+                            <input type="number" id="stats-students" value="0">
+                            <button class="btn-small" onclick="updateStat('students')">Update</button>
+                        </div>
+                        <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                            <label>Reset All Statistics</label>
+                            <button class="btn-danger" onclick="confirmResetStatistics()">
+                                <i class="fas fa-undo"></i> Reset All to 0
+                            </button>
+                            <small style="color: #6c757d;">This will reset all view and download counts to 0 for fresh data gathering.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <h4>Data Management</h4>
+                        <div class="setting-actions">
+                            <button class="btn-secondary" onclick="exportAllData()">
+                                <i class="fas fa-file-export"></i> Export All Data
+                            </button>
+                            <button class="btn-secondary" onclick="importData()">
+                                <i class="fas fa-file-import"></i> Import Data
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-group danger-zone">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Factory Reset</h4>
+                        <p style="font-size: 13px; color: #6c757d; margin-bottom: 15px;">
+                            This will permanently delete ALL data including all research papers, user accounts, and statistics. This action CANNOT be undone.
+                        </p>
+                        <div class="setting-actions">
+                            <button class="btn-danger" onclick="factoryReset()">
+                                <i class="fas fa-trash"></i> Factory Reset - Delete All Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paper Detail Modal -->
+    <div id="paper-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="modal-title">Research Paper Title</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="paper-detail-layout">
+                    <div class="paper-info-section full-width">
+                        <div class="paper-meta">
+                            <span class="badge" id="modal-category">Category</span>
+                            <span class="badge secondary" id="modal-strand">Strand</span>
+                            <span class="badge secondary" id="modal-year">Year</span>
+                        </div>
+                        
+                        <div class="paper-authors">
+                            <h4>Authors</h4>
+                            <p id="modal-authors" class="author-text"></p>
+                        </div>
+                        
+                        <div class="paper-adviser" id="adviser-section">
+                            <h4>Research Adviser</h4>
+                            <p id="modal-adviser"></p>
+                        </div>
+                        
+                        <div class="paper-abstract">
+                            <h4>Abstract</h4>
+                            <p id="modal-abstract" class="abstract-text"></p>
+                        </div>
+                        
+                        <div class="paper-keywords" id="keywords-section">
+                            <h4>Keywords</h4>
+                            <div id="modal-keywords" class="keywords-list"></div>
+                        </div>
+                        
+                        <div class="paper-stats">
+                            <div class="stat">
+                                <i class="fas fa-eye"></i>
+                                <span id="modal-views">0</span> Views
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-download"></i>
+                                <span id="modal-downloads">0</span> Downloads
+                            </div>
+                        </div>
+                        
+                        <div class="paper-actions">
+                            <button class="btn-primary" onclick="downloadPaper()">
+                                <i class="fas fa-download"></i> Download Full Paper
+                            </button>
+                            <button class="btn-secondary" onclick="citePaper()">
+                                <i class="fas fa-quote-right"></i> Cite This Paper
+                            </button>
+                            <button class="btn-secondary" onclick="sharePaper()">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Citation Modal -->
+    <div id="citation-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-quote-right"></i> Cite This Paper</h2>
+                <button class="modal-close" onclick="closeCitationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="citation-instructions">
+                    <p>Select a citation format below, then click "Copy" to copy to clipboard:</p>
+                </div>
+                
+                <div class="citation-formats">
+                    <div class="format-tabs">
+                        <button class="format-tab active" onclick="selectCitationFormat('apa')" data-format="apa">APA 7th</button>
+                        <button class="format-tab" onclick="selectCitationFormat('mla')" data-format="mla">MLA 9th</button>
+                        <button class="format-tab" onclick="selectCitationFormat('chicago')" data-format="chicago">Chicago</button>
+                        <button class="format-tab" onclick="selectCitationFormat('bibtex')" data-format="bibtex">BibTeX</button>
+                    </div>
+                    <div class="citation-result-container">
+                        <pre id="citation-result" class="citation-result"></pre>
+                        <button class="btn-primary copy-citation-btn" onclick="copySelectedCitation()">
+                            <i class="fas fa-copy"></i> Copy Citation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2><i class="fas fa-share-alt"></i> Share This Paper</h2>
+                <button class="modal-close" onclick="closeShareModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <button class="share-btn" onclick="shareVia('copy')">
+                        <i class="fas fa-link"></i>
+                        <span>Copy Link</span>
+                    </button>
+                    <button class="share-btn" onclick="shareVia('email')">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email</span>
+                    </button>
+                    <button class="share-btn" onclick="shareVia('facebook')">
+                        <i class="fab fa-facebook"></i>
+                        <span>Facebook</span>
+                    </button>
+                    <button class="share-btn" onclick="shareVia('twitter')">
+                        <i class="fab fa-twitter"></i>
+                        <span>Twitter</span>
+                    </button>
+                </div>
+                <div class="share-link">
+                    <input type="text" id="share-link-input" readonly>
+                    <button onclick="copyShareLink()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2><i class="fas fa-trash-alt"></i> Delete Research Paper</h2>
+                <button class="modal-close" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Are you sure you want to delete this research paper?</p>
+                </div>
+                <div class="delete-paper-info" id="delete-paper-info">
+                    <!-- Paper info will be inserted here -->
+                </div>
+                <p class="delete-note">This action cannot be undone. The paper will be permanently removed from the repository.</p>
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="closeDeleteModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn-danger" id="confirm-delete-btn" onclick="confirmDeletePaper()">
+                        <i class="fas fa-trash"></i> Delete Paper
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-university"></i>
+                        <h3>Sawata Research Hub</h3>
+                    </div>
+                    <p>The official institutional repository of Sawata National High School, dedicated to preserving and providing access to research outputs.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#browse">Browse Research</a></li>
+                        <li><a href="#statistics">Statistics</a></li>
+                        <li><a href="#about">About Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="#">Science Investigatory Project</a></li>
+                        <li><a href="#">Capstone Project</a></li>
+                        <li><a href="#">Action Research</a></li>
+                        <li><a href="#">Thesis</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contact Information</h4>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> Sawata National High School, San Isidro District, Davao del Norte</li>
+                        <li><i class="fas fa-envelope"></i> snhs.research@davaodelnorte.edu.ph</li>
+                        <li><i class="fas fa-phone"></i> (084) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sawata Research Hub. All Rights Reserved.</p>
+                <p>Developed by Grade 12 Russia Class | Science Education Track</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <span>|</span>
+                    <a href="#">Terms of Use</a>
+                    <span>|</span>
+                    <a href="#">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Upload Research Paper</h2>
+                <button class="modal-close" onclick="closeUploadModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-steps">
+                    <div class="step active" id="step-1-indicator">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Paper Details</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step-2-indicator">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Upload File</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step-3-indicator">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Review & Submit</span>
+                    </div>
+                </div>
+                
+                <!-- Step 1: Paper Details -->
+                <div id="upload-step-1" class="upload-step active">
+                    <form id="upload-form-step1">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="upload-title">Research Title <span class="required">*</span></label>
+                                <input type="text" id="upload-title" required placeholder="Enter the complete title of your research">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="upload-authors">Authors <span class="required">*</span></label>
+                                <input type="text" id="upload-authors" required placeholder="Enter author names separated by commas">
+                                <small class="form-hint">e.g., Juan Dela Cruz, Maria Santos</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row two-col">
+                            <div class="form-group">
+                                <label for="upload-category">Category <span class="required">*</span></label>
+                                <select id="upload-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="SIP">Science Investigatory Project (SIP)</option>
+                                    <option value="Capstone">Capstone Project</option>
+                                    <option value="Action Research">Action Research</option>
+                                    <option value="Thesis">Thesis</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="upload-strand">Academic Strand <span class="required">*</span></label>
+                                <select id="upload-strand" required>
+                                    <option value="">Select Strand</option>
+                                    <option value="STEM">STEM</option>
+                                    <option value="ABM">ABM</option>
+                                    <option value="HUMSS">HUMSS</option>
+                                    <option value="TVL">TVL</option>
+                                    <option value="GAS">GAS</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row two-col">
+                            <div class="form-group">
+                                <label for="upload-year">School Year <span class="required">*</span></label>
+                                <select id="upload-year" required>
+                                    <option value="">Select Year</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="upload-adviser">Research Adviser</label>
+                                <input type="text" id="upload-adviser" placeholder="Enter adviser name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="upload-abstract">Abstract <span class="required">*</span></label>
+                                <textarea id="upload-abstract" rows="5" required placeholder="Enter the abstract of your research (summary of the study)"></textarea>
+                                <small class="form-hint">Minimum 100 characters. A good abstract summarizes the research problem, methodology, results, and conclusions.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="upload-keywords">Keywords</label>
+                                <input type="text" id="upload-keywords" placeholder="Enter keywords separated by commas">
+                                <small class="form-hint">e.g., water quality, environmental science, Davao del Norte</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="closeUploadModal()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="button" class="btn-primary" onclick="nextUploadStep()">
+                                Next: Upload File <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Step 2: File Upload -->
+                <div id="upload-step-2" class="upload-step">
+                    <div class="file-upload-section">
+                        <h3><i class="fas fa-file-pdf"></i> Upload Research Document</h3>
+                        
+                        <div class="upload-requirements">
+                            <h4>File Requirements:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Format: PDF only (.pdf)</li>
+                                <li><i class="fas fa-check"></i> Maximum file size: 25 MB</li>
+                                <li><i class="fas fa-check"></i> File name should be descriptive</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="drop-zone" id="drop-zone">
+                            <input type="file" id="upload-file" accept=".pdf,.docx,.jpg,.jpeg,.png,.gif,.webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/gif,image/webp" onchange="handleFileSelect(event)">
+                            <div class="drop-zone-content">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <h4>Drag and drop your file here</h4>
+                                <p>Supported formats: PDF, DOCX, JPG, JPEG, PNG, GIF, WEBP</p>
+                                <p>or</p>
+                                <button type="button" class="btn-primary" onclick="document.getElementById('upload-file').click()">
+                                    <i class="fas fa-folder-open"></i> Browse Files
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="file-progress-container hidden" id="upload-progress-container">
+                            <div class="file-info-display">
+                                <i class="fas fa-file-pdf"></i>
+                                <div class="file-details">
+                                    <span class="file-name" id="selected-file-name">document.pdf</span>
+                                    <span class="file-size" id="selected-file-size">2.5 MB</span>
+                                </div>
+                                <button type="button" class="remove-file-btn" onclick="clearSelectedFile()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="upload-progress"></div>
+                            </div>
+                            <span class="progress-text" id="progress-text">Uploading... 0%</span>
+                        </div>
+                        
+                        <div class="form-row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label for="upload-consent">
+                                    <input type="checkbox" id="upload-consent" required>
+                                    I confirm that I am the author or have permission to upload this research paper. 
+                                    I agree to make this paper available in the Sawata Research Hub repository.
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="prevUploadStep()">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn-primary" id="btn-review-submit" onclick="nextUploadStep()" disabled>
+                                Next: Review <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Review & Submit -->
+                <div id="upload-step-3" class="upload-step">
+                    <div class="review-section">
+                        <h3><i class="fas fa-clipboard-check"></i> Review Your Submission</h3>
+                        
+                        <div class="review-card">
+                            <h4>Paper Details</h4>
+                            <div class="review-content">
+                                <div class="review-item">
+                                    <span class="review-label">Title:</span>
+                                    <span class="review-value" id="review-title">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Authors:</span>
+                                    <span class="review-value" id="review-authors">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Category:</span>
+                                    <span class="review-value" id="review-category">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Strand:</span>
+                                    <span class="review-value" id="review-strand">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Year:</span>
+                                    <span class="review-value" id="review-year">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Adviser:</span>
+                                    <span class="review-value" id="review-adviser">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Keywords:</span>
+                                    <span class="review-value" id="review-keywords">-</span>
+                                </div>
+                                <div class="review-item full">
+                                    <span class="review-label">Abstract:</span>
+                                    <span class="review-value" id="review-abstract">-</span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">File:</span>
+                                    <span class="review-value" id="review-file">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="prevUploadStep()">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn-primary" onclick="submitResearchPaper()">
+                                <i class="fas fa-paper-plane"></i> Submit Research
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Success Message -->
+                <div id="upload-success" class="upload-step">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Research Paper Submitted Successfully!</h3>
+                        <p>Your research paper has been uploaded and is now being processed.</p>
+                        
+                        <div class="success-details">
+                            <div class="detail-item">
+                                <i class="fas fa-file-alt"></i>
+                                <span id="success-title">Paper Title</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-tag"></i>
+                                <span id="success-category">Category</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span id="success-date">Submission Date</span>
+                            </div>
+                        </div>
+                        
+                        <p class="success-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="success-note-text">Your paper is now visible in the repository.</span>
+                        </p>
+                        
+                        <div class="success-actions">
+                            <button class="btn-primary" onclick="viewUploadedPaper()">
+                                <i class="fas fa-eye"></i> View Paper
+                            </button>
+                            <button class="btn-secondary" onclick="uploadAnotherPaper()">
+                                <i class="fas fa-plus"></i> Upload Another
+                            </button>
+                            <button class="btn-secondary" onclick="closeUploadModal()">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploaded Papers Section -->
+    <section id="my-uploads" class="my-uploads-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">My Uploaded Papers</h2>
+                <p class="section-description">Manage and view your uploaded research papers</p>
+            </div>
+            
+            <div class="my-uploads-content">
+                <div id="my-uploads-list" class="my-uploads-list">
+                    <!-- Dynamic content -->
+                </div>
+                <div id="no-uploads-message" class="no-uploads-message">
+                    <i class="fas fa-folder-open"></i>
+                    <h3>No Papers Uploaded Yet</h3>
+                    <p>You haven't uploaded any research papers. Click the "Upload Research" button to get started.</p>
+                    <button class="btn-primary" onclick="openUploadModal()">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload Your First Paper
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-circle"></i> Login</h2>
+                <button class="modal-close" onclick="closeLoginModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email / School ID</label>
+                        <input type="text" id="login-email" required placeholder="Enter your email or school ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="Enter your password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary full-width">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                    <p class="login-note">Don't have an account? <a href="#" onclick="openSignupModal(); closeLoginModal();">Sign up here</a></p>
+                    <p class="login-note">Admin: admin@sawata.edu.ph / admin123</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+                <button class="modal-close" onclick="closeSignupModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="signup-name" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="signup-email" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-school">School/Organization</label>
+                        <input type="text" id="signup-school" placeholder="Sawata National High School">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-role">Role <span class="required">*</span></label>
+                        <select id="signup-role" required>
+                            <option value="">Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher/Faculty</option>
+                            <option value="researcher">Researcher</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password <span class="required">*</span></label>
+                        <input type="password" id="signup-password" required placeholder="Create a password" minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="signup-confirm" required placeholder="Confirm your password">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="signup-terms" required>
+                            I agree to the <a href="#" onclick="showTerms()">Terms and Conditions</a>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeSignupModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </button>
+                    </div>
+                    <p class="login-note">Already have an account? <a href="#" onclick="openLoginModal(); closeSignupModal();">Login here</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-contract"></i> Terms and Conditions</h2>
+                <button class="modal-close" onclick="document.getElementById('terms-modal').classList.remove('active')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="terms-content">
+                    <h3>1. Acceptance of Terms</h3>
+                    <p>By accessing and using Sawata Research Hub, you accept and agree to be bound by these Terms and Conditions.</p>
+                    
+                    <h3>2. User Accounts</h3>
+                    <p>Users are responsible for maintaining the confidentiality of their account credentials and for all activities that occur under their account.</p>
+                    
+                    <h3>3. Upload Guidelines</h3>
+                    <p>Users may upload research papers, theses, and academic documents. All uploads must be original work or properly cited. Illegitimate or copyrighted material is prohibited.</p>
+                    
+                    <h3>4. Privacy Policy</h3>
+                    <p>Your personal information will be used solely for the purpose of account management and will not be shared with third parties.</p>
+                    
+                    <h3>5. Usage Restrictions</h3>
+                    <p>Users agree not to use the platform for any unlawful purpose or to attempt to gain unauthorized access to any system.</p>
+                </div>
+                <div class="form-actions" style="justify-content: center; margin-top: 20px;">
+                    <button class="btn-primary" onclick="document.getElementById('terms-modal').classList.remove('active'); document.getElementById('signup-terms').checked = true;">
+                        <i class="fas fa-check"></i> I Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/chart.min.js"></script>
+    <script src="assets/js/app.js"></script>
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+</body>
+</html>
